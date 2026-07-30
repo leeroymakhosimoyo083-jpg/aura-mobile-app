@@ -1,8 +1,6 @@
 name: Build Android APK
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -17,19 +15,13 @@ jobs:
         with:
           node-version: 18
 
-      - name: 🏗 Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: 📱 Setup Android SDK
-        uses: android-actions/setup-android@v2
-
-      - name: 📦 Install Dependencies
+      - name: 📦 Install Expo CLI & Dependencies
         run: |
           npm install -g eas-cli
           npm install
 
-      - name: 🚀 Build Android APK
-        run: npx expo run:android --variant release
+      - name: 🚀 Build APK via EAS
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          eas build --platform android --profile preview --non-interactive
